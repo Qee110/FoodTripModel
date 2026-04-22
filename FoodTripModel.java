@@ -33,7 +33,7 @@ public class FoodTripModel {
 
         // 2. DATA COLLECTION
         System.out.println("\n======================================================");
-        System.out.println("   STEP #1: DATA COLLECTION (1-5 SCALE)");
+        System.out.println(" DATA COLLECTION (1-5 SCALE)");
         System.out.println("======================================================");
         
         for (int i = 0; i < numStudents; i++) {
@@ -92,7 +92,7 @@ public class FoodTripModel {
 
         // 6. TABULATE RESULTS
         System.out.println("\n======================================================");
-        System.out.println("   STEP #4: AVERAGE CHOICE PROBABILITY");
+        System.out.println("    AVERAGE CHOICE PROBABILITY");
         System.out.println("======================================================");
         System.out.printf("%-18s | %-10s | %-10s\n", "Transport Mode", "Utility", "Probability");
         System.out.println("------------------------------------------------------");
