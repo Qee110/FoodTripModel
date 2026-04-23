@@ -36,12 +36,13 @@
         }
 
         .page {
-            max-width: 1120px;
+            max-width: 1180px;
             margin: 0 auto;
         }
 
         .hero,
         .panel,
+        .participant-card,
         .mode-card,
         .result-card {
             background: var(--panel);
@@ -71,6 +72,7 @@
         h1,
         h2,
         h3,
+        h4,
         p {
             margin-top: 0;
         }
@@ -86,7 +88,7 @@
         }
 
         .lead {
-            max-width: 760px;
+            max-width: 820px;
             color: var(--muted);
             font-size: 1.05rem;
             line-height: 1.6;
@@ -104,12 +106,18 @@
             line-height: 1.55;
         }
 
+        .setup-row,
         .priority-grid,
         .mode-grid,
         .score-grid,
         .results-grid {
             display: grid;
             gap: 18px;
+        }
+
+        .setup-row {
+            grid-template-columns: minmax(180px, 240px) auto;
+            align-items: end;
         }
 
         .priority-grid {
@@ -124,20 +132,28 @@
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .priority-card,
+        .participant-card,
         .mode-card,
         .result-card {
+            padding: 20px;
             background: var(--panel-strong);
-            padding: 18px;
         }
 
-        .priority-card {
+        .participant-card {
+            margin-bottom: 18px;
+        }
+
+        .priority-card,
+        .mode-card {
             border: 1px solid var(--line);
             border-radius: 18px;
+            padding: 18px;
+            background: #fffdfa;
         }
 
         .priority-card label,
-        .score-item label {
+        .score-item label,
+        .setup-row label {
             display: block;
             font-weight: 700;
             margin-bottom: 6px;
@@ -167,13 +183,13 @@
             border-color: var(--accent);
         }
 
-        .mode-card {
-            border: 1px solid var(--line);
+        .mode-card h4,
+        .participant-card h3 {
+            margin-bottom: 8px;
         }
 
-        .mode-card h3 {
-            margin-bottom: 6px;
-            font-size: 1.25rem;
+        .participant-card h3 {
+            font-size: 1.3rem;
         }
 
         .mode-copy {
@@ -206,7 +222,8 @@
 
         .warning-box,
         .recommendation,
-        .top-pick {
+        .top-pick,
+        .summary-box {
             border-radius: 18px;
             padding: 16px 18px;
         }
@@ -217,6 +234,12 @@
             background: #fff7e8;
             color: var(--warning);
             border: 1px solid rgba(183, 106, 18, 0.22);
+        }
+
+        .summary-box {
+            background: #f9f4ec;
+            border: 1px solid rgba(212, 106, 75, 0.14);
+            margin-bottom: 18px;
         }
 
         .actions {
@@ -245,6 +268,13 @@
             box-shadow: 0 16px 28px rgba(212, 106, 75, 0.28);
         }
 
+        button.secondary {
+            background: #fff;
+            color: var(--accent-dark);
+            border: 1px solid rgba(212, 106, 75, 0.28);
+            box-shadow: none;
+        }
+
         .small-note {
             color: var(--muted);
             font-size: 0.94rem;
@@ -266,7 +296,8 @@
         }
 
         .top-pick p:last-child,
-        .recommendation p:last-child {
+        .recommendation p:last-child,
+        .summary-box p:last-child {
             margin-bottom: 0;
         }
 
@@ -308,6 +339,10 @@
             min-height: 350px;
         }
 
+        .hidden {
+            display: none;
+        }
+
         @media (max-width: 820px) {
             body {
                 padding: 14px;
@@ -318,6 +353,7 @@
                 padding: 20px;
             }
 
+            .setup-row,
             .score-grid,
             .results-grid {
                 grid-template-columns: 1fr;
@@ -330,265 +366,40 @@
         <section class="hero">
             <h1>Pick the best way to travel in Kedah</h1>
             <p class="lead">
-                Tell us what matters most to you, then rate each travel option. The page will show the best match,
-                the confidence score, and a simple recommendation you can act on.
+                Start by entering the number of participants. Each person will answer their own questions, and the
+                page will combine the group answers to suggest the best travel option.
             </p>
         </section>
 
         <section class="panel">
-            <h2>1. What matters most to you?</h2>
+            <h2>1. Set up your group</h2>
             <p class="section-note">
-                Higher numbers mean you care more about that item. This helps the result match your preference.
+                Enter how many people are answering, then create the questions for each participant.
             </p>
-            <div class="priority-grid">
-                <div class="priority-card">
-                    <label for="b_DE">Smooth driving or handling</label>
-                    <p class="hint">Use a higher number if you want a trip that feels easy and in control.</p>
-                    <select id="b_DE">
-                        <option value="1">1 - Not important</option>
-                        <option value="2">2 - A little important</option>
-                        <option value="3" selected>3 - Moderately important</option>
-                        <option value="4">4 - Important</option>
-                        <option value="5">5 - Very important</option>
-                    </select>
+            <div class="setup-row">
+                <div>
+                    <label for="participantCount">Number of participants</label>
+                    <input type="number" id="participantCount" min="1" max="20" placeholder="Example: 3">
                 </div>
-                <div class="priority-card">
-                    <label for="b_JQ">Comfort during the trip</label>
-                    <p class="hint">Use a higher number if a more pleasant and relaxing ride matters to you.</p>
-                    <select id="b_JQ">
-                        <option value="1">1 - Not important</option>
-                        <option value="2">2 - A little important</option>
-                        <option value="3" selected>3 - Moderately important</option>
-                        <option value="4">4 - Important</option>
-                        <option value="5">5 - Very important</option>
-                    </select>
-                </div>
-                <div class="priority-card">
-                    <label for="b_FA">Easy access to food stops</label>
-                    <p class="hint">Use a higher number if being close to food choices matters to you.</p>
-                    <select id="b_FA">
-                        <option value="1">1 - Not important</option>
-                        <option value="2">2 - A little important</option>
-                        <option value="3" selected>3 - Moderately important</option>
-                        <option value="4">4 - Important</option>
-                        <option value="5">5 - Very important</option>
-                    </select>
-                </div>
-                <div class="priority-card">
-                    <label for="b_Cost">Saving money</label>
-                    <p class="hint">Use a higher number if you want the most budget-friendly option.</p>
-                    <select id="b_Cost">
-                        <option value="1">1 - Not important</option>
-                        <option value="2">2 - A little important</option>
-                        <option value="3" selected>3 - Moderately important</option>
-                        <option value="4">4 - Important</option>
-                        <option value="5">5 - Very important</option>
-                    </select>
+                <div class="actions">
+                    <button type="button" onclick="buildParticipantForms()">Create participant questions</button>
+                    <button type="button" class="secondary" onclick="resetAll()">Reset</button>
                 </div>
             </div>
+            <div class="warning-box" id="setupMessage"></div>
         </section>
 
-        <section class="panel">
-            <h2>2. Rank each travel option</h2>
+        <section class="panel hidden" id="questionPanel">
+            <h2>2. Answer the questions</h2>
             <p class="section-note">
-                For each option, give a different rank from 1 to 5. You cannot repeat the same rank inside one card.
+                Every participant must answer all questions. For each travel option, use each rank only once.
             </p>
             <div class="rank-guide">1 = lowest fit, 5 = highest fit</div>
-            <div class="mode-grid">
-                <article class="mode-card" data-mode="car">
-                    <h3>Drive your own car</h3>
-                    <p class="mode-copy">Best when you want flexibility and easy stops along the way.</p>
-                    <div class="score-grid">
-                        <div class="score-item">
-                            <label for="car_de">Smooth driving or handling</label>
-                            <select id="car_de" class="rank-select" data-group="car">
-                                <option value="5" selected>5 - Highest</option>
-                                <option value="4">4</option>
-                                <option value="3">3</option>
-                                <option value="2">2</option>
-                                <option value="1">1 - Lowest</option>
-                            </select>
-                        </div>
-                        <div class="score-item">
-                            <label for="car_jq">Comfort during the trip</label>
-                            <select id="car_jq" class="rank-select" data-group="car">
-                                <option value="5">5 - Highest</option>
-                                <option value="4" selected>4</option>
-                                <option value="3">3</option>
-                                <option value="2">2</option>
-                                <option value="1">1 - Lowest</option>
-                            </select>
-                        </div>
-                        <div class="score-item">
-                            <label for="car_fa">Easy access to food stops</label>
-                            <select id="car_fa" class="rank-select" data-group="car">
-                                <option value="5">5 - Highest</option>
-                                <option value="4">4</option>
-                                <option value="3" selected>3</option>
-                                <option value="2">2</option>
-                                <option value="1">1 - Lowest</option>
-                            </select>
-                        </div>
-                        <div class="score-item">
-                            <label for="car_cost">Saving money</label>
-                            <select id="car_cost" class="rank-select" data-group="car">
-                                <option value="5">5 - Highest</option>
-                                <option value="4">4</option>
-                                <option value="3">3</option>
-                                <option value="2" selected>2</option>
-                                <option value="1">1 - Lowest</option>
-                            </select>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="mode-card" data-mode="pool">
-                    <h3>Carpool</h3>
-                    <p class="mode-copy">Good when you want to share the trip and split costs with others.</p>
-                    <div class="score-grid">
-                        <div class="score-item">
-                            <label for="pool_de">Smooth driving or handling</label>
-                            <select id="pool_de" class="rank-select" data-group="pool">
-                                <option value="5">5 - Highest</option>
-                                <option value="4" selected>4</option>
-                                <option value="3">3</option>
-                                <option value="2">2</option>
-                                <option value="1">1 - Lowest</option>
-                            </select>
-                        </div>
-                        <div class="score-item">
-                            <label for="pool_jq">Comfort during the trip</label>
-                            <select id="pool_jq" class="rank-select" data-group="pool">
-                                <option value="5">5 - Highest</option>
-                                <option value="4">4</option>
-                                <option value="3" selected>3</option>
-                                <option value="2">2</option>
-                                <option value="1">1 - Lowest</option>
-                            </select>
-                        </div>
-                        <div class="score-item">
-                            <label for="pool_fa">Easy access to food stops</label>
-                            <select id="pool_fa" class="rank-select" data-group="pool">
-                                <option value="5">5 - Highest</option>
-                                <option value="4">4</option>
-                                <option value="3">3</option>
-                                <option value="2" selected>2</option>
-                                <option value="1">1 - Lowest</option>
-                            </select>
-                        </div>
-                        <div class="score-item">
-                            <label for="pool_cost">Saving money</label>
-                            <select id="pool_cost" class="rank-select" data-group="pool">
-                                <option value="5" selected>5 - Highest</option>
-                                <option value="4">4</option>
-                                <option value="3">3</option>
-                                <option value="2">2</option>
-                                <option value="1">1 - Lowest</option>
-                            </select>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="mode-card" data-mode="grab">
-                    <h3>E-hailing</h3>
-                    <p class="mode-copy">Useful when you want convenience without driving yourself.</p>
-                    <div class="score-grid">
-                        <div class="score-item">
-                            <label for="grab_de">Smooth driving or handling</label>
-                            <select id="grab_de" class="rank-select" data-group="grab">
-                                <option value="5">5 - Highest</option>
-                                <option value="4" selected>4</option>
-                                <option value="3">3</option>
-                                <option value="2">2</option>
-                                <option value="1">1 - Lowest</option>
-                            </select>
-                        </div>
-                        <div class="score-item">
-                            <label for="grab_jq">Comfort during the trip</label>
-                            <select id="grab_jq" class="rank-select" data-group="grab">
-                                <option value="5" selected>5 - Highest</option>
-                                <option value="4">4</option>
-                                <option value="3">3</option>
-                                <option value="2">2</option>
-                                <option value="1">1 - Lowest</option>
-                            </select>
-                        </div>
-                        <div class="score-item">
-                            <label for="grab_fa">Easy access to food stops</label>
-                            <select id="grab_fa" class="rank-select" data-group="grab">
-                                <option value="5">5 - Highest</option>
-                                <option value="4">4</option>
-                                <option value="3" selected>3</option>
-                                <option value="2">2</option>
-                                <option value="1">1 - Lowest</option>
-                            </select>
-                        </div>
-                        <div class="score-item">
-                            <label for="grab_cost">Saving money</label>
-                            <select id="grab_cost" class="rank-select" data-group="grab">
-                                <option value="5">5 - Highest</option>
-                                <option value="4">4</option>
-                                <option value="3">3</option>
-                                <option value="2" selected>2</option>
-                                <option value="1">1 - Lowest</option>
-                            </select>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="mode-card" data-mode="bus">
-                    <h3>Public bus</h3>
-                    <p class="mode-copy">A budget-friendly option when keeping costs low matters most.</p>
-                    <div class="score-grid">
-                        <div class="score-item">
-                            <label for="bus_de">Smooth driving or handling</label>
-                            <select id="bus_de" class="rank-select" data-group="bus">
-                                <option value="5">5 - Highest</option>
-                                <option value="4">4</option>
-                                <option value="3">3</option>
-                                <option value="2" selected>2</option>
-                                <option value="1">1 - Lowest</option>
-                            </select>
-                        </div>
-                        <div class="score-item">
-                            <label for="bus_jq">Comfort during the trip</label>
-                            <select id="bus_jq" class="rank-select" data-group="bus">
-                                <option value="5">5 - Highest</option>
-                                <option value="4">4</option>
-                                <option value="3">3</option>
-                                <option value="2">2</option>
-                                <option value="1" selected>1 - Lowest</option>
-                            </select>
-                        </div>
-                        <div class="score-item">
-                            <label for="bus_fa">Easy access to food stops</label>
-                            <select id="bus_fa" class="rank-select" data-group="bus">
-                                <option value="5">5 - Highest</option>
-                                <option value="4">4</option>
-                                <option value="3" selected>3</option>
-                                <option value="2">2</option>
-                                <option value="1">1 - Lowest</option>
-                            </select>
-                        </div>
-                        <div class="score-item">
-                            <label for="bus_cost">Saving money</label>
-                            <select id="bus_cost" class="rank-select" data-group="bus">
-                                <option value="5" selected>5 - Highest</option>
-                                <option value="4">4</option>
-                                <option value="3">3</option>
-                                <option value="2">2</option>
-                                <option value="1">1 - Lowest</option>
-                            </select>
-                        </div>
-                    </div>
-                </article>
-            </div>
-
+            <div id="participantsContainer"></div>
             <div class="warning-box" id="validationMessage"></div>
-
             <div class="actions">
                 <button type="button" onclick="calculateModel()">Show best option</button>
-                <div class="small-note">Tip: each travel card must use different ranks.</div>
+                <div class="small-note">All fields start blank so each participant can choose manually.</div>
             </div>
         </section>
 
@@ -596,6 +407,7 @@
             <h2>Your result</h2>
             <div class="results-grid">
                 <div class="result-card">
+                    <div class="summary-box" id="groupSummary"></div>
                     <div class="top-pick" id="topPick"></div>
                     <div class="recommendation" id="recommendation"></div>
                     <table class="result-table" id="resultsTable"></table>
@@ -615,76 +427,145 @@
                 key: "car",
                 name: "Drive your own car",
                 shortReason: "best for flexibility and easy stops",
-                recommendation: "Choose this if you want freedom to stop for food, change plans, or travel on your own time."
+                recommendation: "Choose this if your group wants freedom to stop for food, change plans, or travel on your own time."
             },
             {
                 key: "pool",
                 name: "Carpool",
                 shortReason: "best for sharing cost with others",
-                recommendation: "Choose this if you are travelling with others and want a cheaper trip without losing too much comfort."
+                recommendation: "Choose this if your group wants to split costs and still keep a comfortable trip."
             },
             {
                 key: "grab",
                 name: "E-hailing",
                 shortReason: "best for convenience without driving",
-                recommendation: "Choose this if you want a simple door-to-door option and do not want the hassle of driving."
+                recommendation: "Choose this if your group wants a simple door-to-door option without driving."
             },
             {
                 key: "bus",
                 name: "Public bus",
                 shortReason: "best for a lower budget",
-                recommendation: "Choose this if saving money matters the most and you are okay with a simpler travel experience."
+                recommendation: "Choose this if keeping costs low matters most and your group is okay with a simpler trip."
             }
         ];
 
         const criteria = [
-            { suffix: "de", label: "Smooth driving or handling" },
-            { suffix: "jq", label: "Comfort during the trip" },
-            { suffix: "fa", label: "Easy access to food stops" },
-            { suffix: "cost", label: "Saving money" }
+            {
+                key: "de",
+                title: "Smooth driving or handling",
+                hint: "Pick a higher number if this matters more to you."
+            },
+            {
+                key: "jq",
+                title: "Comfort during the trip",
+                hint: "Pick a higher number if a relaxing ride matters more to you."
+            },
+            {
+                key: "fa",
+                title: "Easy access to food stops",
+                hint: "Pick a higher number if food choices and stops matter more to you."
+            },
+            {
+                key: "cost",
+                title: "Saving money",
+                hint: "Pick a higher number if staying on budget matters more to you."
+            }
         ];
 
-        function getPriorityValues() {
-            return {
-                de: parseFloat(document.getElementById("b_DE").value),
-                jq: parseFloat(document.getElementById("b_JQ").value),
-                fa: parseFloat(document.getElementById("b_FA").value),
-                cost: parseFloat(document.getElementById("b_Cost").value)
-            };
+        function createBlankSelect(options, label) {
+            const optionList = [`<option value="">Select ${label}</option>`];
+            options.forEach((option) => {
+                optionList.push(`<option value="${option.value}">${option.text}</option>`);
+            });
+            return optionList.join("");
         }
 
-        function validateRankGroups(showMessage = false) {
-            const validationBox = document.getElementById("validationMessage");
-            const invalidGroups = [];
+        function buildParticipantForms() {
+            const countInput = document.getElementById("participantCount");
+            const count = parseInt(countInput.value, 10);
+            const setupMessage = document.getElementById("setupMessage");
+            const container = document.getElementById("participantsContainer");
 
-            modes.forEach((mode) => {
-                const values = criteria.map((criterion) =>
-                    document.getElementById(`${mode.key}_${criterion.suffix}`).value
-                );
-                const uniqueCount = new Set(values).size;
-                const card = document.querySelector(`[data-mode="${mode.key}"]`);
-
-                if (uniqueCount !== values.length) {
-                    invalidGroups.push(mode.name);
-                    card.style.borderColor = "#d46a4b";
-                    card.style.boxShadow = "0 0 0 3px rgba(212, 106, 75, 0.12)";
-                } else {
-                    card.style.borderColor = "var(--line)";
-                    card.style.boxShadow = "var(--shadow)";
-                }
-            });
-
-            if (invalidGroups.length > 0) {
-                if (showMessage) {
-                    validationBox.textContent = `${invalidGroups.join(", ")} still has repeated ranks. Please use a different rank for each item inside the same card.`;
-                    validationBox.style.display = "block";
-                }
-                return false;
+            if (!Number.isInteger(count) || count < 1 || count > 20) {
+                setupMessage.textContent = "Please enter a valid number of participants between 1 and 20.";
+                setupMessage.style.display = "block";
+                return;
             }
 
-            validationBox.style.display = "none";
-            validationBox.textContent = "";
-            return true;
+            setupMessage.style.display = "none";
+            setupMessage.textContent = "";
+            container.innerHTML = "";
+
+            for (let participantIndex = 1; participantIndex <= count; participantIndex++) {
+                container.insertAdjacentHTML("beforeend", buildParticipantCard(participantIndex));
+            }
+
+            document.getElementById("questionPanel").classList.remove("hidden");
+            document.getElementById("results").style.display = "none";
+            attachRankListeners();
+        }
+
+        function buildParticipantCard(participantIndex) {
+            const priorityFields = criteria.map((criterion) => `
+                <div class="priority-card">
+                    <label for="p${participantIndex}_${criterion.key}_weight">${criterion.title}</label>
+                    <p class="hint">${criterion.hint}</p>
+                    <select id="p${participantIndex}_${criterion.key}_weight" class="required-field">
+                        ${createBlankSelect([
+                            { value: "1", text: "1 - Not important" },
+                            { value: "2", text: "2 - A little important" },
+                            { value: "3", text: "3 - Moderately important" },
+                            { value: "4", text: "4 - Important" },
+                            { value: "5", text: "5 - Very important" }
+                        ], "a number")}
+                    </select>
+                </div>
+            `).join("");
+
+            const modeFields = modes.map((mode) => `
+                <article class="mode-card" data-mode-group="p${participantIndex}_${mode.key}">
+                    <h4>${mode.name}</h4>
+                    <p class="mode-copy">${mode.shortReason}</p>
+                    <div class="score-grid">
+                        ${criteria.map((criterion) => `
+                            <div class="score-item">
+                                <label for="p${participantIndex}_${mode.key}_${criterion.key}">${criterion.title}</label>
+                                <select
+                                    id="p${participantIndex}_${mode.key}_${criterion.key}"
+                                    class="rank-select required-field"
+                                    data-group="p${participantIndex}_${mode.key}">
+                                    ${createBlankSelect([
+                                        { value: "5", text: "5 - Highest" },
+                                        { value: "4", text: "4" },
+                                        { value: "3", text: "3" },
+                                        { value: "2", text: "2" },
+                                        { value: "1", text: "1 - Lowest" }
+                                    ], "a rank")}
+                                </select>
+                            </div>
+                        `).join("")}
+                    </div>
+                </article>
+            `).join("");
+
+            return `
+                <section class="participant-card" data-participant="p${participantIndex}">
+                    <h3>Participant ${participantIndex}</h3>
+                    <p class="section-note">Answer the questions below for this participant.</p>
+                    <div class="priority-grid">
+                        ${priorityFields}
+                    </div>
+                    <div class="mode-grid">
+                        ${modeFields}
+                    </div>
+                </section>
+            `;
+        }
+
+        function attachRankListeners() {
+            document.querySelectorAll(".rank-select").forEach((select) => {
+                select.addEventListener("change", () => handleRankChange(select));
+            });
         }
 
         function syncGroupOptions(groupName) {
@@ -695,10 +576,11 @@
                     groupSelects
                         .filter((otherSelect) => otherSelect !== select)
                         .map((otherSelect) => otherSelect.value)
+                        .filter(Boolean)
                 );
 
                 Array.from(select.options).forEach((option) => {
-                    option.disabled = usedByOthers.has(option.value) && option.value !== select.value;
+                    option.disabled = option.value !== "" && usedByOthers.has(option.value) && option.value !== select.value;
                 });
             });
         }
@@ -708,79 +590,184 @@
                 groupSelects
                     .filter((select) => select !== currentSelect)
                     .map((select) => select.value)
+                    .filter(Boolean)
             );
 
-            return ["5", "4", "3", "2", "1"].find((value) => !takenValues.has(value)) || currentSelect.value;
+            return ["5", "4", "3", "2", "1"].find((value) => !takenValues.has(value)) || "";
         }
 
         function handleRankChange(changedSelect) {
             const groupName = changedSelect.dataset.group;
             const groupSelects = Array.from(document.querySelectorAll(`.rank-select[data-group="${groupName}"]`));
-            const duplicates = groupSelects.filter(
-                (select) => select !== changedSelect && select.value === changedSelect.value
-            );
 
-            duplicates.forEach((duplicateSelect) => {
-                duplicateSelect.value = getFirstAvailableRank(groupSelects, duplicateSelect);
-            });
+            if (changedSelect.value !== "") {
+                const duplicates = groupSelects.filter(
+                    (select) => select !== changedSelect && select.value === changedSelect.value
+                );
+
+                duplicates.forEach((duplicateSelect) => {
+                    duplicateSelect.value = getFirstAvailableRank(groupSelects, duplicateSelect);
+                });
+            }
 
             syncGroupOptions(groupName);
-            validateRankGroups(true);
+            validateResponses(false);
+        }
+
+        function validateResponses(showMessage) {
+            const messageBox = document.getElementById("validationMessage");
+            const participants = Array.from(document.querySelectorAll("[data-participant]"));
+            const issues = [];
+
+            participants.forEach((participantCard, index) => {
+                const participantName = `Participant ${index + 1}`;
+                const requiredFields = Array.from(participantCard.querySelectorAll(".required-field"));
+                const hasEmptyField = requiredFields.some((field) => field.value === "");
+                let hasDuplicateRank = false;
+
+                modes.forEach((mode) => {
+                    const groupName = `p${index + 1}_${mode.key}`;
+                    const groupSelects = Array.from(document.querySelectorAll(`.rank-select[data-group="${groupName}"]`));
+                    const selectedValues = groupSelects.map((select) => select.value).filter(Boolean);
+                    const isGroupFilled = groupSelects.every((select) => select.value !== "");
+
+                    if (isGroupFilled && new Set(selectedValues).size !== selectedValues.length) {
+                        hasDuplicateRank = true;
+                    }
+
+                    const card = participantCard.querySelector(`[data-mode-group="${groupName}"]`);
+                    if (card) {
+                        if (isGroupFilled && new Set(selectedValues).size !== selectedValues.length) {
+                            card.style.borderColor = "#d46a4b";
+                            card.style.boxShadow = "0 0 0 3px rgba(212, 106, 75, 0.12)";
+                        } else {
+                            card.style.borderColor = "var(--line)";
+                            card.style.boxShadow = "none";
+                        }
+                    }
+                });
+
+                participantCard.style.borderColor = hasEmptyField || hasDuplicateRank ? "#d46a4b" : "rgba(212, 106, 75, 0.12)";
+
+                if (hasEmptyField) {
+                    issues.push(`${participantName} still has unanswered questions.`);
+                } else if (hasDuplicateRank) {
+                    issues.push(`${participantName} still has repeated ranks in one travel option.`);
+                }
+            });
+
+            if (issues.length > 0) {
+                if (showMessage) {
+                    messageBox.innerHTML = issues.join(" ");
+                    messageBox.style.display = "block";
+                }
+                return false;
+            }
+
+            messageBox.style.display = "none";
+            messageBox.textContent = "";
+            return true;
         }
 
         function calculateModel() {
-            if (!validateRankGroups(true)) {
+            if (!validateResponses(true)) {
                 document.getElementById("results").style.display = "none";
                 return;
             }
 
-            const weights = getPriorityValues();
-            const scoredModes = modes.map((mode) => {
-                const de = parseFloat(document.getElementById(`${mode.key}_de`).value);
-                const jq = parseFloat(document.getElementById(`${mode.key}_jq`).value);
-                const fa = parseFloat(document.getElementById(`${mode.key}_fa`).value);
-                const cost = parseFloat(document.getElementById(`${mode.key}_cost`).value);
+            const participantCount = parseInt(document.getElementById("participantCount").value, 10);
+            const participantResults = [];
 
-                const utility =
-                    weights.de * de +
-                    weights.jq * jq +
-                    weights.fa * fa +
-                    weights.cost * cost;
+            for (let participantIndex = 1; participantIndex <= participantCount; participantIndex++) {
+                const weights = {};
+                criteria.forEach((criterion) => {
+                    weights[criterion.key] = parseFloat(document.getElementById(`p${participantIndex}_${criterion.key}_weight`).value);
+                });
+
+                const modeScores = modes.map((mode) => {
+                    const scores = {};
+                    criteria.forEach((criterion) => {
+                        scores[criterion.key] = parseFloat(document.getElementById(`p${participantIndex}_${mode.key}_${criterion.key}`).value);
+                    });
+
+                    const utility =
+                        weights.de * scores.de +
+                        weights.jq * scores.jq +
+                        weights.fa * scores.fa +
+                        weights.cost * scores.cost;
+
+                    return {
+                        key: mode.key,
+                        utility,
+                        expUtility: Math.exp(utility)
+                    };
+                });
+
+                participantResults.push({ weights, modeScores });
+            }
+
+            const averageWeights = getAverageWeights(participantResults);
+            const finalModes = modes.map((mode) => {
+                const utilities = participantResults.map((participant) =>
+                    participant.modeScores.find((entry) => entry.key === mode.key).utility
+                );
+                const averageUtility = utilities.reduce((sum, value) => sum + value, 0) / utilities.length;
 
                 return {
                     ...mode,
-                    scores: { de, jq, fa, cost },
-                    utility,
-                    expUtility: Math.exp(utility)
+                    utility: averageUtility,
+                    expUtility: Math.exp(averageUtility)
                 };
             });
 
-            const totalExp = scoredModes.reduce((sum, mode) => sum + mode.expUtility, 0);
-            scoredModes.forEach((mode) => {
+            const totalExp = finalModes.reduce((sum, mode) => sum + mode.expUtility, 0);
+            finalModes.forEach((mode) => {
                 mode.probability = (mode.expUtility / totalExp) * 100;
             });
 
-            scoredModes.sort((a, b) => b.probability - a.probability);
-
-            renderResults(scoredModes, weights);
+            finalModes.sort((a, b) => b.probability - a.probability);
+            renderResults(finalModes, averageWeights, participantCount);
         }
 
-        function renderResults(scoredModes, weights) {
+        function getAverageWeights(participantResults) {
+            const totals = { de: 0, jq: 0, fa: 0, cost: 0 };
+
+            participantResults.forEach((participant) => {
+                Object.keys(totals).forEach((key) => {
+                    totals[key] += participant.weights[key];
+                });
+            });
+
+            const count = participantResults.length;
+            Object.keys(totals).forEach((key) => {
+                totals[key] = totals[key] / count;
+            });
+
+            return totals;
+        }
+
+        function renderResults(scoredModes, averageWeights, participantCount) {
             const results = document.getElementById("results");
             const topPick = scoredModes[0];
             const runnerUp = scoredModes[1];
-            const strongestPreference = getTopPriority(weights);
+            const strongestPreference = getTopPriority(averageWeights);
+
+            document.getElementById("groupSummary").innerHTML = `
+                <p><strong>Group summary</strong></p>
+                <p>This result combines answers from <strong>${participantCount}</strong> participant${participantCount > 1 ? "s" : ""}.</p>
+                <p>The strongest overall group priority was <strong>${strongestPreference}</strong>.</p>
+            `;
 
             document.getElementById("topPick").innerHTML = `
                 <p><strong>Best match: ${topPick.name}</strong></p>
-                <p>${topPick.name} has the highest match score at <strong>${topPick.probability.toFixed(2)}%</strong>.</p>
+                <p>${topPick.name} has the highest group match score at <strong>${topPick.probability.toFixed(2)}%</strong>.</p>
                 <p>This option stands out because it is ${topPick.shortReason}.</p>
             `;
 
             document.getElementById("recommendation").innerHTML = `
                 <p><strong>Recommendation</strong></p>
                 <p>${topPick.recommendation}</p>
-                <p>Your biggest priority was <strong>${strongestPreference}</strong>. If you want a backup option, consider <strong>${runnerUp.name}</strong> next.</p>
+                <p>If you want a backup option, consider <strong>${runnerUp.name}</strong> next.</p>
             `;
 
             let tableHTML = `
@@ -803,7 +790,6 @@
 
             document.getElementById("resultsTable").innerHTML = tableHTML;
             results.style.display = "block";
-
             renderChart(scoredModes);
         }
 
@@ -872,18 +858,22 @@
                 cost: "saving money"
             };
 
-            const entries = Object.entries(weights).sort((a, b) => b[1] - a[1]);
-            return labels[entries[0][0]];
+            return labels[Object.entries(weights).sort((a, b) => b[1] - a[1])[0][0]];
         }
 
-        modes.forEach((mode) => syncGroupOptions(mode.key));
+        function resetAll() {
+            document.getElementById("participantCount").value = "";
+            document.getElementById("participantsContainer").innerHTML = "";
+            document.getElementById("questionPanel").classList.add("hidden");
+            document.getElementById("results").style.display = "none";
+            document.getElementById("setupMessage").style.display = "none";
+            document.getElementById("validationMessage").style.display = "none";
 
-        document.querySelectorAll(".rank-select").forEach((select) => {
-            select.addEventListener("change", () => handleRankChange(select));
-        });
-
-        validateRankGroups(false);
-        calculateModel();
+            if (myChart) {
+                myChart.destroy();
+                myChart = null;
+            }
+        }
     </script>
 </body>
 </html>
