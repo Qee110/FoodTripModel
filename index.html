@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discrete Choice Model | Kedah Trip</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1, h2 { color: #2c3e50; text-align: center; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .input-group { display: flex; flex-direction: column; }
+        label { font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
+        input { padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #3498db; color: white; }
+        button { background-color: #27ae60; color: white; border: none; padding: 15px 20px; font-size: 1.1em; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; }
+        button:hover { background-color: #2ecc71; }
+        .results-section { display: none; margin-top: 30px; }
+        canvas { max-height: 400px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Discrete Choice Model: Kedah Trip</h1>
+    
+    <h2>1. Define Beta Weights (Theory-Based)</h2>
+    <div class="grid">
+        <div class="input-group"><label>Beta 1 (Driving Exp)</label><input type="number" id="b_DE" value="0.5" step="0.1"></div>
+        <div class="input-group"><label>Beta 2 (Journey Quality)</label><input type="number" id="b_JQ" value="0.5" step="0.1"></div>
+        <div class="input-group"><label>Beta 3 (Food Avail)</label><input type="number" id="b_FA" value="0.5" step="0.1"></div>
+        <div class="input-group"><label>Beta 4 (Cost)</label><input type="number" id="b_Cost" value="0.5" step="0.1"></div>
+    </div>
+
+    <h2>2. Aggregated Perceptions (Average Likert Scores)</h2>
+    <table>
+        <tr>
+            <th>Transport Mode</th>
+            <th>DE (Exp)</th>
+            <th>JQ (Comfort)</th>
+            <th>FA (Food)</th>
+            <th>Cost (Affordable)</th>
+        </tr>
+        <tr>
+            <td><strong>Own Car</strong></td>
+            <td><input type="number" id="car_de" value="4.2" step="0.1" min="1" max="5"></td>
+            <td><input type="number" id="car_jq" value="3.8" step="0.1" min="1" max="5"></td>
+            <td><input type="number" id="car_fa" value="4.5" step="0.1" min="1" max="5"></td>
+            <td><input type="number" id="car_cost" value="2.5" step="0.1" min="1" max="5"></td>
+        </tr>
+        <tr>
+            <td><strong>Car Pool</strong></td>
+            <td><input type="number" id="pool_de" value="3.5" step="0.1" min="1" max="5"></td>
+            <td><input type="number" id="pool_jq" value="3.2" step="0.1" min="1" max="5"></td>
+            <td><input type="number" id="pool_fa" value="4.0" step="0.1" min="1" max="5"></td>
+            <td><input type="number" id="pool_cost" value="4.0" step="0.1" min="1" max="5"></td>
+        </tr>
+        <tr>
+            <td><strong>E-hailing</strong></td>
+            <td><input type="number" id="grab_de" value="4.0" step="0.1" min="1" max="5"></td>
+            <td><input type="number" id="grab_jq" value="4.1" step="0.1" min="1" max="5"></td>
+            <td><input type="number" id="grab_fa" value="3.0" step="0.1" min="1" max="5"></td>
+            <td><input type="number" id="grab_cost" value="1.5" step="0.1" min="1" max="5"></td>
+        </tr>
+        <tr>
+            <td><strong>Public Bus</strong></td>
+            <td><input type="number" id="bus_de" value="2.0" step="0.1" min="1" max="5"></td>
+            <td><input type="number" id="bus_jq" value="1.5" step="0.1" min="1" max="5"></td>
+            <td><input type="number" id="bus_fa" value="1.0" step="0.1" min="1" max="5"></td>
+            <td><input type="number" id="bus_cost" value="4.5" step="0.1" min="1" max="5"></td>
+        </tr>
+    </table>
+
+    <button onclick="calculateModel()">Calculate Model</button>
+
+    <div class="results-section" id="results">
+        <h2>3 & 4. Utility & Probability Results</h2>
+        <table id="resultsTable">
+            <tr>
+                <th>Transport Mode</th>
+                <th>Utility (U)</th>
+                <th>Probability (%)</th>
+            </tr>
+            </table>
+        <canvas id="probChart"></canvas>
+    </div>
+</div>
+
+<script>
+    let myChart = null;
+
+    function calculateModel() {
+        // 1. Get Beta Weights
+        const b_DE = parseFloat(document.getElementById('b_DE').value);
+        const b_JQ = parseFloat(document.getElementById('b_JQ').value);
+        const b_FA = parseFloat(document.getElementById('b_FA').value);
+        const b_Cost = parseFloat(document.getElementById('b_Cost').value);
+
+        // 2. Get Averages
+        const modes = ['car', 'pool', 'grab', 'bus'];
+        const names = ['Drive Own Car', 'Car Pooling', 'E-hailing', 'Public Bus'];
+        let utilities = [];
+        let expU = [];
+        let sumExpU = 0;
+
+        // Calculate Utility and Exp(U)
+        for (let i = 0; i < modes.length; i++) {
+            let m = modes[i];
+            let de = parseFloat(document.getElementById(m + '_de').value);
+            let jq = parseFloat(document.getElementById(m + '_jq').value);
+            let fa = parseFloat(document.getElementById(m + '_fa').value);
+            let cost = parseFloat(document.getElementById(m + '_cost').value);
+
+            let u = (b_DE * de) + (b_JQ * jq) + (b_FA * fa) + (b_Cost * cost);
+            utilities.push(u);
+            
+            let eU = Math.exp(u);
+            expU.push(eU);
+            sumExpU += eU;
+        }
+
+        // Calculate Probabilities and Generate Table HTML
+        let probs = [];
+        let tableHTML = `<tr><th>Transport Mode</th><th>Utility (U)</th><th>Probability (%)</th></tr>`;
+        
+        for (let i = 0; i < modes.length; i++) {
+            let p = (expU[i] / sumExpU) * 100;
+            probs.push(p);
+            tableHTML += `<tr><td><strong>${names[i]}</strong></td><td>${utilities[i].toFixed(3)}</td><td>${p.toFixed(2)}%</td></tr>`;
+        }
+
+        // Update UI
+        document.getElementById('resultsTable').innerHTML = tableHTML;
+        document.getElementById('results').style.display = 'block';
+
+        // Render Chart.js Graph
+        const ctx = document.getElementById('probChart').getContext('2d');
+        if (myChart) { myChart.destroy(); } // clear old chart
+        
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: names,
+                datasets: [{
+                    label: 'Market Share / Probability (%)',
+                    data: probs,
+                    backgroundColor: ['#3498db', '#2ecc71', '#f1c40f', '#e74c3c'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true, max: 100 } }
+            }
+        });
+    }
+</script>
+</body>
+</html>
